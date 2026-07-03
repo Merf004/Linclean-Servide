@@ -45,19 +45,19 @@ export default async function CommandesPage({
 
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-lg font-medium text-text-primary">Commandes</h1>
         <Link
           href="/commandes/nouvelle"
-          className="bg-primary text-white rounded-lg px-4 py-2 text-[13px] font-medium flex items-center gap-1.5"
+          className="bg-primary text-white rounded-lg px-4 py-2 text-[13px] font-medium flex items-center gap-1.5 justify-center w-full sm:w-auto"
         >
           <Plus size={15} /> Nouvelle commande
         </Link>
       </div>
 
       <div className="bg-surface-2 border border-border rounded-xl overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-border flex-wrap gap-3">
-          <div className="flex gap-1.5 flex-wrap">
+        <div className="flex flex-col gap-3 px-5 py-3.5 border-b border-border sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap gap-1.5">
             {STATUT_FILTERS.map((f) => (
               <Link
                 key={f.value}
@@ -72,8 +72,8 @@ export default async function CommandesPage({
               </Link>
             ))}
           </div>
-          <div className="flex items-center gap-2">
-            <form action="/commandes" className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <form action="/commandes" className="flex items-center gap-2 flex-wrap">
               {searchParams.statut && <input type="hidden" name="statut" value={searchParams.statut} />}
               <input
                 type="date"
@@ -95,43 +95,45 @@ export default async function CommandesPage({
           </div>
         </div>
 
-        <div className="grid grid-cols-[90px_1fr_140px_130px_90px_90px] gap-2 px-5 py-2 text-[10px] font-medium uppercase tracking-wider text-text-muted bg-surface-1">
-          <span>N° commande</span>
-          <span>Client</span>
-          <span>Service</span>
-          <span>Statut</span>
-          <span>Prix total</span>
-          <span>Paiement</span>
+        <div className="overflow-x-auto">
+          <div className="min-w-[720px] grid grid-cols-[90px_1fr_140px_130px_90px_90px] gap-2 px-5 py-2 text-[10px] font-medium uppercase tracking-wider text-text-muted bg-surface-1">
+            <span>N° commande</span>
+            <span>Client</span>
+            <span>Service</span>
+            <span>Statut</span>
+            <span>Prix total</span>
+            <span>Paiement</span>
+          </div>
+
+          {(commandes ?? []).map((c: any) => (
+            <Link
+              key={c.id}
+              href={`/commandes/${c.id}`}
+              className="min-w-[720px] grid grid-cols-[90px_1fr_140px_130px_90px_90px] gap-2 px-5 py-2.5 items-center text-[12px] border-b border-border last:border-b-0 hover:bg-surface-1"
+            >
+              <span className="text-primary font-medium text-[11px]">{c.numero_commande}</span>
+              <div>
+                <div className="font-medium text-text-primary">{c.client_nom}</div>
+                <div className="text-text-secondary text-[11px]">{c.quartiers?.nom ?? "—"}</div>
+              </div>
+              <span className="text-text-secondary text-[11px]">
+                {c.service === "lavage_repassage" ? "Lavage + Repassage" : "Lavage"}
+              </span>
+              <StatusBadge statut={c.statut} />
+              <span className="font-medium text-text-primary">
+                {(Number(c.prix_service) + Number(c.prix_livraison)).toLocaleString("fr-FR")} F
+              </span>
+              <span className={`text-[11px] flex items-center gap-1 ${c.paye ? "text-[#3B6D11]" : "text-[#854F0B]"}`}>
+                {c.paye ? <CheckCircle2 size={12} /> : <Clock size={12} />}
+                {c.paye ? "Payé" : "Non payé"}
+              </span>
+            </Link>
+          ))}
+
+          {(!commandes || commandes.length === 0) && (
+            <div className="px-5 py-8 text-center text-[12px] text-text-muted">Aucune commande trouvée.</div>
+          )}
         </div>
-
-        {(commandes ?? []).map((c: any) => (
-          <Link
-            key={c.id}
-            href={`/commandes/${c.id}`}
-            className="grid grid-cols-[90px_1fr_140px_130px_90px_90px] gap-2 px-5 py-2.5 items-center text-[12px] border-b border-border last:border-b-0 hover:bg-surface-1"
-          >
-            <span className="text-primary font-medium text-[11px]">{c.numero_commande}</span>
-            <div>
-              <div className="font-medium text-text-primary">{c.client_nom}</div>
-              <div className="text-text-secondary text-[11px]">{c.quartiers?.nom ?? "—"}</div>
-            </div>
-            <span className="text-text-secondary text-[11px]">
-              {c.service === "lavage_repassage" ? "Lavage + Repassage" : "Lavage"}
-            </span>
-            <StatusBadge statut={c.statut} />
-            <span className="font-medium text-text-primary">
-              {(Number(c.prix_service) + Number(c.prix_livraison)).toLocaleString("fr-FR")} F
-            </span>
-            <span className={`text-[11px] flex items-center gap-1 ${c.paye ? "text-[#3B6D11]" : "text-[#854F0B]"}`}>
-              {c.paye ? <CheckCircle2 size={12} /> : <Clock size={12} />}
-              {c.paye ? "Payé" : "Non payé"}
-            </span>
-          </Link>
-        ))}
-
-        {(!commandes || commandes.length === 0) && (
-          <div className="px-5 py-8 text-center text-[12px] text-text-muted">Aucune commande trouvée.</div>
-        )}
       </div>
     </>
   );

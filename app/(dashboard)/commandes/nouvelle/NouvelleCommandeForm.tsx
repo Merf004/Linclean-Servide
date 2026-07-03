@@ -104,8 +104,8 @@ export default function NouvelleCommandeForm({ quartiers }: { quartiers: Quartie
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-surface-2 border border-border rounded-xl p-6 flex flex-col gap-5 max-w-2xl">
-      <div className="grid grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit} className="bg-surface-2 border border-border rounded-xl p-6 flex flex-col gap-5 w-full max-w-2xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Nom du client">
           <input required value={clientNom} onChange={(e) => setClientNom(e.target.value)} className={inputClass} />
         </Field>
@@ -114,7 +114,7 @@ export default function NouvelleCommandeForm({ quartiers }: { quartiers: Quartie
         </Field>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Quartier">
           <select value={quartierId} onChange={(e) => setQuartierId(e.target.value)} className={inputClass}>
             <option value="">— Choisir un quartier —</option>
@@ -180,7 +180,7 @@ export default function NouvelleCommandeForm({ quartiers }: { quartiers: Quartie
         </div>
       </Field>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Field label="Poids (kg)">
           <input
             type="number"

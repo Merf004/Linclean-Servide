@@ -37,7 +37,7 @@ export default async function CommandeDetailPage({ params }: { params: { id: str
         <div className="md:col-span-2 flex flex-col gap-4">
           <div className="bg-surface-2 border border-border rounded-xl p-5">
             <div className="text-[13px] font-medium text-text-primary mb-3">Informations client</div>
-            <div className="grid grid-cols-2 gap-3 text-[13px]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[13px]">
               <Info label="Nom" value={commande.client_nom} />
               <Info label="Contact" value={commande.client_contact} />
               <Info label="Quartier" value={commande.quartiers?.nom ?? "—"} />

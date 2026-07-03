@@ -97,7 +97,7 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
         <StatCard label="Commandes aujourd'hui" value={String(commandesAujourdhui.length)} sub={`${commandesEnCours.length} en cours`} />
         <StatCard label="CA aujourd'hui" value={fmt(caJour)} accent sub="FCFA" />
         <StatCard label="CA ce mois" value={fmt(caMois)} accent sub="FCFA" />
