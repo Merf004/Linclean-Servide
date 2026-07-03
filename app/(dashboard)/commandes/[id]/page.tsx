@@ -76,7 +76,16 @@ export default async function CommandeDetailPage({ params }: { params: { id: str
         <div className="flex flex-col gap-4">
           <div className="bg-surface-2 border border-border rounded-xl p-5">
             <div className="text-[13px] font-medium text-text-primary mb-3">Facturation</div>
-            <Info label="Prix du service" value={`${Number(commande.prix_service).toLocaleString("fr-FR")} F`} />
+            <Info
+              label="Prix du service"
+              value={`${Number(commande.prix_service).toLocaleString("fr-FR")} F`}
+            />
+            {commande.prix_kg && commande.poids_kg && (
+              <Info
+                label="Détail"
+                value={`${commande.poids_kg} kg × ${Number(commande.prix_kg).toLocaleString("fr-FR")} F/kg`}
+              />
+            )}
             <Info label="Ramassage + livraison" value={`${Number(commande.prix_livraison).toLocaleString("fr-FR")} F`} />
             <div className="border-t border-border my-2" />
             <Info label="Total" value={`${prixTotal.toLocaleString("fr-FR")} F`} bold />

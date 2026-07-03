@@ -116,12 +116,18 @@ export default async function DashboardPage() {
         <div className="bg-surface-2 border border-border rounded-xl p-5">
           <div className="text-[13px] font-medium text-text-primary mb-3">Répartition des statuts</div>
           <div className="flex flex-col gap-2.5">
-            {Object.entries(STATUTS).map(([key, s]) => (
-              <div key={key} className="flex items-center justify-between">
-                <StatusBadge statut={key} />
-                <span className="text-[13px] font-medium text-text-primary">{statutCounts[key] ?? 0}</span>
-              </div>
-            ))}
+            {Object.entries(STATUTS).map(([key, s]) => {
+              const Icon = s.icon;
+              return (
+                <div key={key} className="flex items-center justify-between">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-primary-light text-primary">
+                    <Icon size={12} strokeWidth={2.2} />
+                    {s.label}
+                  </span>
+                  <span className="text-[13px] font-medium text-text-primary">{statutCounts[key] ?? 0}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
 

@@ -2,10 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { X, Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 type Quartier = { id: string; nom: string };
 type Article = { designation: string; quantite: number };
+
+const inputClass =
+  "w-full border border-border rounded-lg px-3 py-2 text-[13px] bg-surface-0 text-text-primary outline-none focus:ring-2 focus:ring-primary-soft";
 
 export default function NouvelleCommandeForm({ quartiers }: { quartiers: Quartier[] }) {
   const router = useRouter();
@@ -17,9 +21,10 @@ export default function NouvelleCommandeForm({ quartiers }: { quartiers: Quartie
   const [nouveauQuartier, setNouveauQuartier] = useState("");
   const [service, setService] = useState<"lavage" | "lavage_repassage">("lavage");
   const [articles, setArticles] = useState<Article[]>([{ designation: "", quantite: 1 }]);
-  const [prixService, setPrixService] = useState("");
+  const [prixKg, setPrixKg] = useState("");
   const [prixLivraison, setPrixLivraison] = useState("");
   const [poidsKg, setPoidsKg] = useState("");
+  const prixServiceCalcule = (Number(poidsKg) || 0) * (Number(prixKg) || 0);
   const [photo, setPhoto] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +71,8 @@ export default function NouvelleCommandeForm({ quartiers }: { quartiers: Quartie
           client_contact: clientContact,
           quartier_id: finalQuartierId || null,
           service,
-          prix_service: Number(prixService) || 0,
+          prix_service: prixServiceCalcule,
+          prix_kg: Number(prixKg) || 0,
           prix_livraison: Number(prixLivraison) || 0,
           poids_kg: poidsKg ? Number(poidsKg) : null,
           photo_url: photoUrl,
@@ -101,20 +107,16 @@ export default function NouvelleCommandeForm({ quartiers }: { quartiers: Quartie
     <form onSubmit={handleSubmit} className="bg-surface-2 border border-border rounded-xl p-6 flex flex-col gap-5 max-w-2xl">
       <div className="grid grid-cols-2 gap-4">
         <Field label="Nom du client">
-          <input required value={clientNom} onChange={(e) => setClientNom(e.target.value)} className="input" />
+          <input required value={clientNom} onChange={(e) => setClientNom(e.target.value)} className={inputClass} />
         </Field>
         <Field label="Contact (téléphone)">
-          <input required value={clientContact} onChange={(e) => setClientContact(e.target.value)} className="input" />
+          <input required value={clientContact} onChange={(e) => setClientContact(e.target.value)} className={inputClass} />
         </Field>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <Field label="Quartier">
-          <select
-            value={quartierId}
-            onChange={(e) => setQuartierId(e.target.value)}
-            className="input"
-          >
+          <select value={quartierId} onChange={(e) => setQuartierId(e.target.value)} className={inputClass}>
             <option value="">— Choisir un quartier —</option>
             {quartiers.map((q) => (
               <option key={q.id} value={q.id}>
@@ -127,13 +129,13 @@ export default function NouvelleCommandeForm({ quartiers }: { quartiers: Quartie
               placeholder="Ou nouveau quartier..."
               value={nouveauQuartier}
               onChange={(e) => setNouveauQuartier(e.target.value)}
-              className="input mt-2"
+              className={`${inputClass} mt-2`}
             />
           )}
         </Field>
 
         <Field label="Service">
-          <select value={service} onChange={(e) => setService(e.target.value as any)} className="input">
+          <select value={service} onChange={(e) => setService(e.target.value as any)} className={inputClass}>
             <option value="lavage">Lavage seul</option>
             <option value="lavage_repassage">Lavage + Repassage</option>
           </select>
@@ -143,50 +145,71 @@ export default function NouvelleCommandeForm({ quartiers }: { quartiers: Quartie
       <Field label="Contenu du sac">
         <div className="flex flex-col gap-2">
           {articles.map((a, i) => (
-            <div key={i} className="flex gap-2">
-              <input
-                placeholder="ex: Pantalon"
-                value={a.designation}
-                onChange={(e) => updateArticle(i, "designation", e.target.value)}
-                className="input flex-1"
-              />
+            <div key={i} className="flex gap-2 items-center">
               <input
                 type="number"
                 min={1}
                 value={a.quantite}
                 onChange={(e) => updateArticle(i, "quantite", Number(e.target.value))}
-                className="input w-20"
+                className="border border-border rounded-lg px-3 py-2 text-[13px] bg-surface-0 text-text-primary outline-none focus:ring-2 focus:ring-primary-soft w-20 shrink-0"
               />
+              <input
+                placeholder="ex: Pantalon"
+                value={a.designation}
+                onChange={(e) => updateArticle(i, "designation", e.target.value)}
+                className={`${inputClass} flex-1`}
+              />
+
               <button
                 type="button"
                 onClick={() => setArticles((prev) => prev.filter((_, idx) => idx !== i))}
-                className="text-text-muted px-2"
+                className="text-text-muted hover:text-text-primary px-1 shrink-0"
+                aria-label="Retirer l'article"
               >
-                ✕
+                <X size={16} />
               </button>
             </div>
           ))}
           <button
             type="button"
             onClick={() => setArticles((prev) => [...prev, { designation: "", quantite: 1 }])}
-            className="text-[12px] text-primary text-left"
+            className="text-[12px] text-primary text-left flex items-center gap-1"
           >
-            + Ajouter un article
+            <Plus size={14} /> Ajouter un article
           </button>
         </div>
       </Field>
 
       <div className="grid grid-cols-3 gap-4">
-        <Field label="Prix du service (FCFA)">
-          <input type="number" required value={prixService} onChange={(e) => setPrixService(e.target.value)} className="input" />
+        <Field label="Poids (kg)">
+          <input
+            type="number"
+            step="0.1"
+            required
+            value={poidsKg}
+            onChange={(e) => setPoidsKg(e.target.value)}
+            className={inputClass}
+          />
+        </Field>
+        <Field label="Prix / kg (FCFA)">
+          <input
+            type="number"
+            required
+            value={prixKg}
+            onChange={(e) => setPrixKg(e.target.value)}
+            className={inputClass}
+          />
         </Field>
         <Field label="Ramassage + livraison (FCFA)">
-          <input type="number" value={prixLivraison} onChange={(e) => setPrixLivraison(e.target.value)} className="input" />
-        </Field>
-        <Field label="Poids (kg)">
-          <input type="number" step="0.1" value={poidsKg} onChange={(e) => setPoidsKg(e.target.value)} className="input" />
+          <input type="number" value={prixLivraison} onChange={(e) => setPrixLivraison(e.target.value)} className={inputClass} />
         </Field>
       </div>
+
+      <Field label="Prix du service (calculé automatiquement)">
+        <div className="border border-border rounded-lg px-3 py-2 text-[13px] bg-surface-1 text-text-primary font-medium">
+          {prixServiceCalcule.toLocaleString("fr-FR")} F
+        </div>
+      </Field>
 
       <Field label="Photo du linge à la collecte">
         <input type="file" accept="image/*" onChange={(e) => setPhoto(e.target.files?.[0] ?? null)} className="text-[12px]" />
@@ -201,22 +224,6 @@ export default function NouvelleCommandeForm({ quartiers }: { quartiers: Quartie
       >
         {loading ? "Création..." : "Créer la commande"}
       </button>
-
-      <style jsx global>{`
-        .input {
-          border: 1px solid var(--border);
-          border-radius: 10px;
-          padding: 8px 12px;
-          font-size: 13px;
-          background: var(--surface-0);
-          color: var(--text-primary);
-          outline: none;
-          width: 100%;
-        }
-        .input:focus {
-          box-shadow: 0 0 0 2px #b5d4f4;
-        }
-      `}</style>
     </form>
   );
 }

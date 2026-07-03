@@ -63,6 +63,7 @@ create table if not exists commandes (
   prix_service numeric(10,2) not null default 0,
   prix_livraison numeric(10,2) not null default 0,
   poids_kg numeric(6,2),
+  prix_kg numeric(10,2),
   photo_url text,
   statut statut_commande not null default 'en_attente',
   paye boolean not null default false,

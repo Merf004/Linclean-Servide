@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Plus, Clock, CheckCircle2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import StatusBadge from "@/components/StatusBadge";
 
@@ -48,9 +49,9 @@ export default async function CommandesPage({
         <h1 className="text-lg font-medium text-text-primary">Commandes</h1>
         <Link
           href="/commandes/nouvelle"
-          className="bg-primary text-white rounded-lg px-4 py-2 text-[13px] font-medium"
+          className="bg-primary text-white rounded-lg px-4 py-2 text-[13px] font-medium flex items-center gap-1.5"
         >
-          + Nouvelle commande
+          <Plus size={15} /> Nouvelle commande
         </Link>
       </div>
 
@@ -121,8 +122,9 @@ export default async function CommandesPage({
             <span className="font-medium text-text-primary">
               {(Number(c.prix_service) + Number(c.prix_livraison)).toLocaleString("fr-FR")} F
             </span>
-            <span className={`text-[11px] ${c.paye ? "text-[#3B6D11]" : "text-[#854F0B]"}`}>
-              {c.paye ? "✓ Payé" : "⏱ Non payé"}
+            <span className={`text-[11px] flex items-center gap-1 ${c.paye ? "text-[#3B6D11]" : "text-[#854F0B]"}`}>
+              {c.paye ? <CheckCircle2 size={12} /> : <Clock size={12} />}
+              {c.paye ? "Payé" : "Non payé"}
             </span>
           </Link>
         ))}
