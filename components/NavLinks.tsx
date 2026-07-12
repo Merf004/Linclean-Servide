@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package } from "lucide-react";
+import { LayoutDashboard, Package, BarChart3 } from "lucide-react";
 
 const LINKS = [
   { href: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
   { href: "/commandes", label: "Commandes", icon: Package },
+  { href: "/statistiques", label: "Statistiques", icon: BarChart3 },
 ];
 
-export default function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
+export default function NavLinks() {
   const pathname = usePathname();
 
   return (
@@ -21,7 +22,6 @@ export default function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
           <Link
             key={link.href}
             href={link.href}
-            onClick={onNavigate}
             className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] transition-colors ${
               active
                 ? "bg-primary-light text-primary font-medium"
